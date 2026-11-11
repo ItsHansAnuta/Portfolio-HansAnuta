@@ -1,110 +1,181 @@
-# Hans Anuta Portfolio
+# Hansifies IT
 
-An interactive, personal portfolio for **Hansifies IT / Hans Anuta**, built with
-React and Vite. Includes a draggable desktop, a reversible pointer-responsive
-identity card, interactive app previews, and a filterable notebook. Responsive
-layouts, keyboard controls, and reduced-motion support are included.
+Hans Anuta's portfolio and personal editorial journal at **https://hansifies.io**.
+React + Vite frontend, Node.js / Express server, and MySQL / MariaDB publishing
+storage. No PHP.
 
-Node.js powers the tooling and optional static server. No PHP is used.
+## What's included
 
-## Updating your site
+- Real pages: Home, The person, The craft, Editorials, and Say hello.
+- An interactive home desk with movable cards and working UI experiments.
+- A staggered editorial feed with category filters and full-text search.
+- A seamless article reader: opens over the collection, preserves its position,
+  closes with Back / Escape, and supports shareable URLs and browser history.
+- An owner-only dashboard at `/dashboard`: image uploads, titles, introductions,
+  categories, paragraph blocks, pull quotes, highlighted statements, preview,
+  drafts, publishing, editing, unpublishing, and deletion.
+- Server-rendered public articles and live sitemap updates immediately after
+  publishing. New posts do not require a GitHub push or rebuild.
 
-Edit **`src/content.js`**. No component edits are needed to:
+## Hostinger setup (required for live publishing)
 
-- Set your name, email, GitHub, and Instagram URL. Instagram's display name is
-  currently Donovan Galager; its link appears when you provide the URL.
-- Add your real portrait: put the image in `public/images/`, then set `portrait`
-  to `/images/your-photo.webp`. It inherits the interactive tilt/flip treatment.
-- Set `siteUrl` to your final production domain, such as `https://yourdomain.com`.
-  Builds then generate canonical URLs, Open Graph URLs, and a sitemap.
-- Add projects to `projects` using the documented example. Only entries with
-  `published: true` appear. An empty collection hides the entire project section.
-- Add notebook entries with a unique lowercase hyphenated `id`, category, label,
-  title, excerpt, an array of body paragraphs, and `published: true`. Each entry
-  gets its own pre-rendered page at `/notes/your-id/`. Keep IDs stable after publishing.
+The previous site was a static frontend. **The publishing version must run as a
+Node.js web app**, since a static deployment cannot sign you in, upload images,
+or write to the database.
 
-The two initial notebook entries explain this site's design; replace or expand
-them with your actual writing, career stories, hobbies, and project notes.
-Never put private information in the content file, including unpublished drafts:
-this is a public frontend bundle. `published` controls visibility, not privacy.
+Use Hostinger's Node.js / Express web app deployment, connected to:
 
-**Search visibility:** `npm run build` generates complete HTML for the homepage
-and published notes, individual page metadata, and structured data. Crawlers can
-read the content without running JavaScript. Set your domain before production
-to finish canonical/sitemap setup. The base homepage metadata is in `index.html`;
-the pre-render build maintains the per-page metadata. When you change the site's
-description, update it in `index.html` and `scripts/prerender.mjs` together.
+| Setting | Value |
+| --- | --- |
+| Repository | `ItsHansAnuta/Portfolio-HansAnuta` |
+| Branch | `main` |
+| Root | Repository root |
+| Runtime | Node.js 22.x, current patch release |
+| Install | `npm ci` |
+| Build | `npm run build` |
+| Start | `npm start` |
+| Entry file, if requested | `server/index.mjs` |
+| Domain | `hansifies.io` |
 
-**Design:** `src/styles.css` holds the responsive styles and color tokens.
-`src/App.jsx` holds the interactive components. Fonts load from Google Fonts,
-with local system fallbacks. No animation libraries or external UI kits are required.
+Do not deploy only `dist` as a static frontend. The running app needs `server/`,
+`src/content.js`, `src/editorials/model.js`, production dependencies, `dist/`,
+and `dist-ssr/`. The server uses Hostinger's `PORT` environment variable.
+
+Set these **server-side environment variables** in Hostinger:
+
+| Variable | Value |
+| --- | --- |
+| `NODE_ENV` | `production` |
+| `SITE_URL` | `https://hansifies.io` |
+| `DB_HOST` | Database hostname from Hostinger; `localhost` only if supported for this Node app |
+| `DB_PORT` | `3306`, unless Hostinger specifies another port |
+| `DB_NAME` | `u533823530_hansifies` |
+| `DB_USER` | `u533823530_HansAnuta` |
+| `DB_PASSWORD` | Your database password, entered privately in Hostinger |
+| `DB_SSL` | `true` if the database provider requires verified TLS; otherwise `false` |
+| `ADMIN_PASSWORD_HASH` | Generated below |
+| `SESSION_SECRET` | Generated below |
+
+Generate **separate dashboard credentials** locally:
+
+```sh
+npm run admin:credentials
+```
+
+Save the displayed dashboard password in your password manager. Paste the
+generated hash and session secret into Hostinger's environment settings, then
+restart/redeploy the Node app. Open **https://hansifies.io/dashboard** and sign
+in using the generated dashboard password, not the database password.
+
+The app creates only its own tables: `hansifies_posts`, `hansifies_images`, and
+`hansifies_settings`. It seeds the two existing studio notes once. Drafts, posts,
+and original image files are stored in MySQL, so redeploying source code does not
+erase them. Include these tables in database backups. Existing unrelated tables
+are not modified.
+
+Missing database or dashboard settings show a setup message; public starter pages
+remain readable. A configured but unreachable database fails startup, so check
+the Hostinger application logs and database hostname/network access if needed.
 
 ## Local development
 
-Install Node.js 22.x (which includes npm), then run from the project folder:
+Use Node.js 22.x. Install dependencies:
 
 ```sh
 npm ci
+```
+
+Copy `.env.example` to an untracked `.env` and fill in your local database and
+dashboard settings. Never use `VITE_` prefixes for secrets: those are frontend
+variables. The production database does not need to be exposed to your local PC;
+you can use a separate local MySQL database for development.
+
+Run these in two terminals:
+
+```sh
+npm run dev:server
+```
+
+```sh
 npm run dev
 ```
 
-To check the production build locally:
+Open Vite's URL. It proxies `/api` and `/uploads` to the Node server on port 3000.
+Keep `PORT=3000` locally or update the Vite proxy target if you change it.
+
+To verify the production site locally:
 
 ```sh
 npm run build
 npm start
 ```
 
-`npm start` serves the built `dist` directory, supports React client-side routes,
-and uses the `PORT` environment variable when set (otherwise port 3000).
-Build the project before starting it. `npm run preview` is also available for
-local build previews.
+Open `http://localhost:3000`. `npm run preview` previews only static frontend
+output; use the Node server to test login and publishing.
 
-## Connect Hostinger to GitHub
+On Windows PowerShell with script execution restricted, use `npm.cmd` in place
+of `npm`.
 
-In Hostinger's Node.js Web App setup, select **Import Git Repository** and
-authorize the Hostinger GitHub app to access:
+## Publishing workflow
 
-https://github.com/ItsHansAnuta/Portfolio-HansAnuta
+1. Open `/dashboard` and sign in.
+2. Choose **Write a new entry** and add a title and category.
+3. Optionally upload a cover (JPG, PNG, WebP, or GIF; up to 8 MB) and describe it.
+4. Write paragraph blocks. Change a block to **Pull quote** or **Highlighted
+   statement** to make that passage stand out. Reorder blocks with the arrows.
+5. Preview the entry, save a draft, or publish it directly.
+6. To edit, select the entry in the sidebar. Its URL remains stable when the title
+   changes. **Move to drafts** removes it from the public feed; Delete removes it.
 
-Use these settings:
+There is no automatic draft saving. A status indicator shows unsaved changes;
+save before leaving the editor. Images are saved when uploaded; posts become
+public only when published. The site does not interpret raw HTML in post bodies.
 
-| Setting | Value |
-| --- | --- |
-| Repository | `ItsHansAnuta/Portfolio-HansAnuta` |
-| Branch | `main` |
-| Root directory | Repository root (`.`) |
-| Framework | React / Vite (frontend application) |
-| Node.js version | 22.x |
-| Install command (if shown) | `npm ci` |
-| Build command | `npm run build` |
-| Output directory | `dist` |
-| Start command (if requested) | `npm start` |
+The dashboard uses signed, HTTP-only, same-site cookies, origin-checked writes,
+login attempt limits, and server-side validation. Changing the dashboard password
+hash or session secret invalidates existing sessions. Sessions last eight hours.
 
-Hostinger's frontend deployment serves `dist` directly; it does not need a
-persistent Node.js server. The valid `start` script is included for compatibility
-and for serving the build locally.
+## Updating the portfolio
 
-Deploy once and enable **automatic deployment** for `main` in Hostinger.
-Future pushes to `main` will then trigger a build and deployment.
-Connecting the repository and authorizing Hostinger must be completed in your
-Hostinger/GitHub account; adding project files alone does not enable deployment.
+Profile/contact links, portrait, skills, and project cards live in
+`src/content.js`. Published editorials live in the database and are managed from
+the dashboard. The `notes` array supplies the initial studio notes only; it does
+not overwrite database content after initialization.
 
-If the repository/branch error persists, refresh the repository list, select
-`main`, and confirm that the Hostinger GitHub app has access to this repository.
+Put your portrait in `public/images/` and set `profile.portrait` to its path. It
+inherits the interactive identity card. Empty `projects` hides the projects
+section. Instagram currently displays Donovan Galager; its link appears once
+`profile.instagramUrl` is supplied.
 
-## Upload future changes
+## Code map
 
-From this project folder, review and upload your changes:
+- `src/App.jsx`: application navigation and interactive home desk.
+- `src/PortfolioPages.jsx`: person, craft, and contact pages.
+- `src/editorials/Editorials.jsx`: feed and focused article reader.
+- `src/editorials/Dashboard.jsx`: owner editor and dashboard.
+- `src/editorials/editorials.css`: navigation, journal, reader, and editor styles.
+- `src/entry-server.jsx`: server rendering, metadata, and safe hydration data.
+- `server/index.mjs`: Express API and live page/image delivery.
+- `server/store.mjs`: MySQL storage, validation, and optimistic edit concurrency.
+- `server/auth.mjs`: login, session signing, and login rate limits.
+
+Fonts use Google Fonts with system fallbacks. Motion respects reduced-motion
+preferences. Old `/notes/:slug` URLs redirect to `/editorials/:slug` on the server.
+
+## Tests
 
 ```sh
-git status
-git diff
-git add <changed-files>
-git commit -m "Describe your changes"
-git push origin main
+npm test
 ```
 
-Local file saves are uploaded only after committing and pushing. Dependencies,
-generated build output, and local environment files are excluded from Git.
-Hostinger installs dependencies and builds from the committed source.
+Authentication and validation tests run without a database. Integration tests
+also exercise the actual MySQL API when `TEST_DB_HOST`, `TEST_DB_NAME`,
+`TEST_DB_USER`, and `TEST_DB_PASSWORD` are set. Use a separate, disposable
+database named `hansifies_test_*`; these tests create and remove test entries.
+Run `npm run build` before the integration tests to also test live server rendering.
+
+## Deployment
+
+Review changes, commit the intended source files, and push to `main` to trigger
+Hostinger's connected deployment. Database credentials and `.env` files never
+belong in Git. Generated `dist`, `dist-ssr`, and dependencies are ignored.

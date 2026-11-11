@@ -1,10 +1,14 @@
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
+import { seedPosts } from './editorials/model.js';
+
+const data = JSON.parse(document.getElementById('site-data')?.textContent || 'null');
 
 const app = (
   <React.StrictMode>
-    <App />
+    <BrowserRouter><App initialPosts={data?.posts || seedPosts} /></BrowserRouter>
   </React.StrictMode>
 );
 

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { profile } from './content.js';
 import { Editorials, ArticleReader } from './editorials/Editorials.jsx';
 import Dashboard from './editorials/Dashboard.jsx';
-import { AboutPage, CraftPage, ContactPage } from './PortfolioPages.jsx';
+import { AboutSection, CraftSection, ContactPage } from './PortfolioPages.jsx';
 import Icon from './Icon.jsx';
 import './styles.css';
 import './editorials/editorials.css';
@@ -65,7 +65,6 @@ function AppPreview() {
 }
 
 function HomePage() {
-  const navigate = useNavigate();
   const [resetKey, setResetKey] = useState(0);
   const [light, setLight] = useState(false);
   return <>
@@ -75,7 +74,7 @@ function HomePage() {
           <div className={`desk ${light ? 'warm-desk' : ''}`}>
             <span className="desk-coordinates" aria-hidden="true">X: curiosity<br />Y: possibility</span>
             <div className="desk-ring ring-a" aria-hidden="true" /><div className="desk-ring ring-b" aria-hidden="true" />
-            <DeskCard className="profile-card" label="01 / the human" resetKey={resetKey}><Identity onAbout={() => navigate('/about')} /></DeskCard>
+            <DeskCard className="profile-card" label="01 / the human" resetKey={resetKey}><Identity onAbout={() => document.getElementById('about')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })} /></DeskCard>
             <DeskCard className="preview-card" label="02 / the things I build" resetKey={resetKey}><AppPreview /></DeskCard>
             <DeskCard className="note-card" label="03 / a thought" resetKey={resetKey}><div className="sticky-note"><span className="note-pin" /><span className="handwritten">Good software.<br />A little personality.<br /><span>A work in progress.</span></span><span className="note-signature">— Hans</span></div></DeskCard>
             <button className={`desk-spark ${light ? 'lit' : ''}`} onClick={() => setLight(!light)} aria-label="Toggle warm desk lighting" aria-pressed={light}>✳</button>
@@ -84,16 +83,14 @@ function HomePage() {
             <span className="desk-edition">PERSONAL WEB / VOL. 01</span>
           </div>
         </div>
-        <div className="hero-foot"><span>CODE, CURIOSITY & EVERYTHING IN BETWEEN</span><Link to="/about">Meet the person <span>↗</span></Link><span>BUILT TO KEEP EVOLVING</span></div>
+        <div className="hero-foot"><span>CODE, CURIOSITY & EVERYTHING IN BETWEEN</span><a href="#about">Meet the person <span>↓</span></a><span>BUILT TO KEEP EVOLVING</span></div>
       </section>
-      <div className="home-links section-wrap">
-        <Link to="/about"><span className="eyebrow">THE PERSON</span><h2>A little more <em>human.</em></h2><span>Meet Hans ↗</span></Link>
-        <Link to="/editorials"><span className="eyebrow">THE JOURNAL</span><h2>Life, in <em>entries.</em></h2><span>Read the editorials ↗</span></Link>
-      </div>
+      <AboutSection />
+      <CraftSection />
   </>;
 }
 
-const pageNames = { '/': 'A personal corner', '/about': 'The person', '/craft': 'The craft', '/editorials': 'Editorials', '/contact': 'Say hello', '/dashboard': 'Publishing desk' };
+const pageNames = { '/': 'A personal corner', '/editorials': 'Editorials', '/contact': 'Say hello', '/dashboard': 'Publishing desk' };
 
 function App({ initialPosts = [] }) {
   const location = useLocation();
@@ -118,24 +115,33 @@ function App({ initialPosts = [] }) {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (location.hash && !background) {
+      const target = document.getElementById(location.hash.slice(1));
+      target?.scrollIntoView({ behavior: 'instant' });
+      previousBackground.current = false;
+      return;
+    }
     if (!background && !previousBackground.current) window.scrollTo({ top: 0, behavior: 'instant' });
     previousBackground.current = Boolean(background);
+  }, [location.key, location.pathname, location.hash, background]);
+
+  useEffect(() => {
     const name = posts.find(post => location.pathname === `/editorials/${post.slug}`)?.title || pageNames[location.pathname] || 'Journal';
     document.title = `${name} — Hansifies IT`;
-  }, [location.pathname, background, posts]);
+  }, [location.pathname, posts]);
 
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <header className="site-header app-header">
       <Link className="brand" to="/" aria-label="Hansifies IT home"><span className="brand-symbol">h<span>✳</span></span><span>hansifies<span className="brand-it">IT</span></span></Link>
-      <nav aria-label="Main navigation">{[['/', 'Home'], ['/about', 'The person'], ['/craft', 'The craft'], ['/editorials', 'Editorials']].map(([to, label]) => <NavLink key={to} to={to} end={to === '/'}>{label}</NavLink>)}</nav>
+      <nav aria-label="Main navigation">{[['/', 'Home'], ['/editorials', 'Editorials']].map(([to, label]) => <NavLink key={to} to={to} end={to === '/'}>{label}</NavLink>)}</nav>
       <NavLink className="contact-nav" to="/contact">Say hello <Icon name="external" size={17} /></NavLink>
     </header>
     <main id="main" tabIndex={-1}>
       <Routes location={background || location}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/craft" element={<CraftPage />} />
+        <Route path="/about" element={<Navigate to="/#about" replace />} />
+        <Route path="/craft" element={<Navigate to="/#craft" replace />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/editorials" element={<Editorials posts={posts} feedState={feedState} />} />
         <Route path="/editorials/:slug" element={<ArticleReader posts={posts} />} />

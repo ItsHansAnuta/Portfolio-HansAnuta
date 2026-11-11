@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise';
 import { randomUUID } from 'node:crypto';
-import { seedPosts } from '../src/editorials/model.js';
+import { removeUntouchedDemos } from './demo-cleanup.mjs';
 
 export async function openStore(env = process.env) {
   if (!env.DB_HOST || !env.DB_NAME || !env.DB_USER || !env.DB_PASSWORD) return null;
@@ -22,10 +22,8 @@ export async function openStore(env = process.env) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
-    const [result] = await connection.execute("INSERT IGNORE INTO hansifies_settings (name, value) VALUES ('initialized', 'true')");
-    if (result.affectedRows) {
-      for (const post of seedPosts) await connection.execute('INSERT INTO hansifies_posts (id, slug, data) VALUES (?, ?, ?)', [post.id, post.slug, JSON.stringify(post)]);
-    }
+    const [result] = await connection.execute("INSERT IGNORE INTO hansifies_settings (name, value) VALUES ('remove-untouched-demos-v1', 'true')");
+    if (result.affectedRows) await removeUntouchedDemos(connection);
     await connection.commit();
   } catch (error) { await connection.rollback(); throw error; }
   finally { connection.release(); }

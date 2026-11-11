@@ -6,9 +6,10 @@ storage. No PHP.
 
 ## What's included
 
-- Real pages: Home, The person, The craft, Editorials, and Say hello.
+- One continuous Home page: the interactive desk, The person, and The craft.
+- Separate Editorials and Say hello pages with client-side navigation.
 - An interactive home desk with movable cards and working UI experiments.
-- A staggered editorial feed with category filters and full-text search.
+- An evenly aligned editorial grid with category filters and full-text search.
 - A seamless article reader: opens over the collection, preserves its position,
   closes with Back / Escape, and supports shareable URLs and browser history.
 - An owner-only dashboard at `/dashboard`: image uploads, titles, introductions,
@@ -36,6 +37,10 @@ Use Hostinger's Node.js / Express web app deployment, connected to:
 | Start | `npm start` |
 | Entry file, if requested | `server/index.mjs` |
 | Domain | `hansifies.io` |
+
+The `postinstall` script builds both frontend and server-rendering assets during
+installation, including under the Express preset. Build tools are included in
+production dependencies so production-only installs can generate these assets.
 
 Do not deploy only `dist` as a static frontend. The running app needs `server/`,
 `src/content.js`, `src/editorials/model.js`, production dependencies, `dist/`,
@@ -68,12 +73,12 @@ restart/redeploy the Node app. Open **https://hansifies.io/dashboard** and sign
 in using the generated dashboard password, not the database password.
 
 The app creates only its own tables: `hansifies_posts`, `hansifies_images`, and
-`hansifies_settings`. It seeds the two existing studio notes once. Drafts, posts,
+`hansifies_settings`. The journal starts empty. Drafts, posts,
 and original image files are stored in MySQL, so redeploying source code does not
 erase them. Include these tables in database backups. Existing unrelated tables
 are not modified.
 
-Missing database or dashboard settings show a setup message; public starter pages
+Missing database or dashboard settings show a setup message; public portfolio pages
 remain readable. A configured but unreachable database fails startup, so check
 the Hostinger application logs and database hostname/network access if needed.
 
@@ -139,8 +144,9 @@ hash or session secret invalidates existing sessions. Sessions last eight hours.
 
 Profile/contact links, portrait, skills, and project cards live in
 `src/content.js`. Published editorials live in the database and are managed from
-the dashboard. The `notes` array supplies the initial studio notes only; it does
-not overwrite database content after initialization.
+the dashboard. There are no automatic sample posts. A one-time migration removes
+only the exact, untouched demo entries from the earlier release; anything edited
+or written by the owner is preserved.
 
 Put your portrait in `public/images/` and set `profile.portrait` to its path. It
 inherits the interactive identity card. Empty `projects` hides the projects
@@ -150,7 +156,7 @@ section. Instagram currently displays Donovan Galager; its link appears once
 ## Code map
 
 - `src/App.jsx`: application navigation and interactive home desk.
-- `src/PortfolioPages.jsx`: person, craft, and contact pages.
+- `src/PortfolioPages.jsx`: person/craft sections and the contact page.
 - `src/editorials/Editorials.jsx`: feed and focused article reader.
 - `src/editorials/Dashboard.jsx`: owner editor and dashboard.
 - `src/editorials/editorials.css`: navigation, journal, reader, and editor styles.
@@ -158,9 +164,11 @@ section. Instagram currently displays Donovan Galager; its link appears once
 - `server/index.mjs`: Express API and live page/image delivery.
 - `server/store.mjs`: MySQL storage, validation, and optimistic edit concurrency.
 - `server/auth.mjs`: login, session signing, and login rate limits.
+- `server/demo-cleanup.mjs`: conservative cleanup of the earlier demo entries.
 
 Fonts use Google Fonts with system fallbacks. Motion respects reduced-motion
 preferences. Old `/notes/:slug` URLs redirect to `/editorials/:slug` on the server.
+Old `/about` and `/craft` links redirect to the corresponding sections on Home.
 
 ## Tests
 

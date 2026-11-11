@@ -21,7 +21,7 @@ export function Editorials({ posts, feedState }) {
       const quote = post.blocks.find(block => block.type === 'quote' || block.type === 'statement');
       return <Link className={`editorial-card editorial-card-${index % 4} ${post.cover ? 'has-cover' : 'no-cover'}`} key={post.id} to={`/editorials/${post.slug}`} state={{ backgroundLocation: location }}>
         <div className="editorial-art">
-          {post.cover ? <img src={post.cover} alt={post.coverAlt || ''} loading={index > 1 ? 'lazy' : 'eager'} /> : <><span className="editorial-art-grid" /><span className="editorial-art-symbol" aria-hidden="true">{quote ? '“' : index % 2 ? '↗' : '✳'}</span>{quote && <span className="editorial-art-quote">{quote.text.slice(0, 140)}{quote.text.length > 140 ? '…' : ''}</span>}{!quote && <span className="editorial-art-label">{post.starter ? 'NOTES FROM THE STUDIO' : post.category.toUpperCase()}</span>}</>}
+          {post.cover ? <img src={post.cover} alt={post.coverAlt || ''} loading={index > 1 ? 'lazy' : 'eager'} /> : <><span className="editorial-art-grid" /><span className="editorial-art-symbol" aria-hidden="true">{quote ? '“' : index % 2 ? '↗' : '✳'}</span>{quote && <span className="editorial-art-quote">{quote.text.slice(0, 140)}{quote.text.length > 140 ? '…' : ''}</span>}{!quote && <span className="editorial-art-label">{post.category.toUpperCase()}</span>}</>}
           <span className="entry-number">ENTRY / {(index + 1).toString().padStart(2, '0')}</span>
           <span className="open-article" aria-hidden="true">↗</span>
         </div>

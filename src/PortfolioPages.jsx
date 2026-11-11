@@ -1,11 +1,11 @@
 import { capabilities, profile, projects } from './content.js';
 import Icon from './Icon.jsx';
 
-export function AboutPage() {
-  return <section className="about-section section-wrap route-page">
+export function AboutSection() {
+  return <section className="about-section section-wrap" id="about" aria-labelledby="about-title">
     <div className="section-kicker"><span>THE PERSON / BEHIND THE PIXELS</span><Icon name="star" /></div>
     <div className="about-layout">
-      <h1 className="page-title">A developer.<br />But not <em>just</em><br />a developer.</h1>
+      <h2 className="page-title" id="about-title">A developer.<br />But not <em>just</em><br />a developer.</h2>
       <div className="about-copy">
         <p className="large-copy">Behind every interface is a person figuring things out. Hi, I'm {profile.name}.</p>
         <p>Hansifies IT is my personal corner for the things I build, the things I learn, and the interests that make their way into my work.</p>
@@ -16,12 +16,12 @@ export function AboutPage() {
   </section>;
 }
 
-export function CraftPage() {
+export function CraftSection() {
   const published = projects.filter(project => project.published);
-  return <div className="route-page">
-    <section className="craft-section section-wrap">
+  return <div id="craft">
+    <section className="craft-section section-wrap" aria-labelledby="craft-title">
       <div className="section-kicker"><span>THE CRAFT</span><span>IDEAS → INTERFACES → EVERYDAY TOOLS</span></div>
-      <div className="section-heading"><h1 className="page-title">Different screens.<br /><em>Same curiosity.</em></h1><p>I like turning ideas into software you can actually use.<br />Here's where that takes shape.</p></div>
+      <div className="section-heading"><h2 className="page-title" id="craft-title">Different screens.<br /><em>Same curiosity.</em></h2><p>I like turning ideas into software you can actually use.<br />Here's where that takes shape.</p></div>
       <div className="capability-grid">{capabilities.map(item => <article className="capability" key={item.number}>
         <div className="capability-top"><Icon name={item.icon} size={30} /><span>/{item.number}</span></div>
         <h3>{item.title}</h3><p>{item.description}</p><div className="tags">{item.tags.map(tag => <span key={tag}>{tag}</span>)}</div>

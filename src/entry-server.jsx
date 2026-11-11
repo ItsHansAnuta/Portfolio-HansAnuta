@@ -5,7 +5,7 @@ import { profile } from './content.js';
 
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const serialize = value => JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
-const pageTitles = { '/': "Hans Anuta's personal corner", '/about': 'The person', '/craft': 'The craft', '/contact': 'Say hello', '/editorials': 'Editorials — life, in entries', '/dashboard': 'Private publishing desk' };
+const pageTitles = { '/': "Hans Anuta's personal corner", '/contact': 'Say hello', '/editorials': 'Editorials — life, in entries', '/dashboard': 'Private publishing desk' };
 
 export function render({ path, posts, template, siteUrl = profile.siteUrl }) {
   const post = posts.find(post => path === `/editorials/${post.slug}`);
@@ -13,7 +13,7 @@ export function render({ path, posts, template, siteUrl = profile.siteUrl }) {
   const description = post?.excerpt || 'The personal space of Hans Anuta. Software, editorials, life updates, and things learned along the way.';
   const canonical = `${siteUrl}${path}`;
   const schema = post ? { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.title, description,
-    author: { '@type': 'Person', name: profile.name, url: `${siteUrl}/about` }, url: canonical,
+    author: { '@type': 'Person', name: profile.name, url: `${siteUrl}/#about` }, url: canonical,
     ...(post.publishedAt ? { datePublished: post.publishedAt, dateModified: post.updatedAt || post.publishedAt } : {}),
     ...(post.cover ? { image: `${siteUrl}${post.cover}` } : {}),
   } : { '@context': 'https://schema.org', '@type': path === '/editorials' ? 'Blog' : 'WebPage', name: title, url: canonical };

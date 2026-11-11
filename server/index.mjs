@@ -7,12 +7,11 @@ import { fileURLToPath } from 'node:url';
 import { openStore, validatePost } from './store.mjs';
 import { makeAuth } from './auth.mjs';
 import { profile } from '../src/content.js';
-import { seedPosts } from '../src/editorials/model.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const production = process.env.NODE_ENV === 'production';
 const store = await openStore();
-const publicPosts = () => store ? store.published() : Promise.resolve(seedPosts);
+const publicPosts = () => store ? store.published() : Promise.resolve([]);
 const auth = makeAuth({ password: process.env.ADMIN_PASSWORD, passwordHash: process.env.ADMIN_PASSWORD_HASH, secret: process.env.SESSION_SECRET, production });
 const app = express();
 app.disable('x-powered-by');
@@ -102,10 +101,12 @@ try {
 }
 app.get('/sitemap.xml', async (req, res) => {
   const base = process.env.SITE_URL || profile.siteUrl;
-  const paths = ['/', '/about', '/craft', '/contact', '/editorials', ...(await publicPosts()).map(post => `/editorials/${post.slug}`)];
+  const paths = ['/', '/contact', '/editorials', ...(await publicPosts()).map(post => `/editorials/${post.slug}`)];
   res.type('xml').send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map(path => `<url><loc>${base}${path}</loc></url>`).join('')}</urlset>`);
 });
 app.get('/notes/:slug', (req, res) => res.redirect(301, `/editorials/${encodeURIComponent(req.params.slug)}`));
+app.get('/about', (req, res) => res.redirect(301, '/#about'));
+app.get('/craft', (req, res) => res.redirect(301, '/#craft'));
 app.use('/assets', express.static(resolve(dist, 'assets'), { maxAge: '1y', immutable: true }));
 app.use(express.static(resolve(root, 'public'), { index: false }));
 app.get('/robots.txt', (req, res) => res.type('text').send(`User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /api/admin/\nSitemap: ${process.env.SITE_URL || profile.siteUrl}/sitemap.xml\n`));

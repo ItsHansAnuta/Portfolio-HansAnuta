@@ -1,0 +1,39 @@
+[
+  {
+    "id": "a-place-to-keep-building",
+    "slug": "a-place-to-keep-building",
+    "title": "A place to keep building.",
+    "excerpt": "A portfolio can be a work in progress. This one is designed to grow.",
+    "category": "Building",
+    "cover": "",
+    "coverAlt": "",
+    "blocks": [
+      {"type": "paragraph", "text": "This is the starting point for Hansifies IT: a home for software, experiments, and the things worth documenting along the way."},
+      {"type": "paragraph", "text": "Finished projects will have a place here when they are ready. In the meantime, the interface itself is an experiment in making a personal website feel a little more personal."},
+      {"type": "paragraph", "text": "These notes will become a record of decisions, discoveries, and work in progress. Less of a pitch. More of a notebook."}
+    ],
+    "status": "published",
+    "publishedAt": null,
+    "createdAt": null,
+    "updatedAt": null,
+    "starter": true
+  },
+  {
+    "id": "interfaces-you-can-touch",
+    "slug": "interfaces-you-can-touch",
+    "title": "Interfaces you can play with.",
+    "excerpt": "A small experiment in making a website feel like a space, not a slide.",
+    "category": "Experiments",
+    "cover": "",
+    "coverAlt": "",
+    "blocks": [
+      {"type": "paragraph", "text": "The desk at the top of this page is a working interaction experiment. You can move its cards, change the app preview, and turn the identity card over."},
+      {"type": "paragraph", "text": "The goal is to give you something to explore without putting the actual information out of reach. The content is still readable, the controls work with a keyboard, and reduced-motion preferences are respected."}
+    ],
+    "status": "published",
+    "publishedAt": null,
+    "createdAt": null,
+    "updatedAt": null,
+    "starter": true
+  }
+]

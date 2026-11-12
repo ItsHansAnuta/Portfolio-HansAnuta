@@ -11,7 +11,7 @@ export function Editorials({ posts, feedState }) {
   const filtered = posts.filter(post => (category === 'Everything' || post.category === category) && `${post.title} ${post.excerpt} ${post.blocks.map(block => block.text).join(' ')}`.toLowerCase().includes(query.toLowerCase().trim()));
   return <section className="journal-page section-wrap">
     <div className="section-kicker"><span>THE EDITORIALS / AN OPEN JOURNAL</span><span><span className="live-dot" /> WRITTEN BY HANS</span></div>
-    <div className="journal-heading"><div><span className="journal-overline">THINGS MADE. THINGS FELT. THINGS LEARNED.</span><h1>Life, in <em>entries.</em><span>✳</span></h1></div><p>Updates from my world. Longer thoughts.{' '}<br />Little things worth keeping.<br /><span>A personal record, one post at a time.</span></p></div>
+    <div className="journal-heading"><div><span className="journal-overline">THINGS MADE. THINGS FELT. THINGS LEARNED.</span><h1>Life, in <em>entries.</em></h1></div><p>Updates from my world. Longer thoughts.{' '}<br />Little things worth keeping.<br /><span>A personal record, one post at a time.</span></p></div>
     <div className="journal-tools">
       <div className="journal-filters" role="group" aria-label="Filter editorials">{categories.map(item => <button key={item} onClick={() => setCategory(item)} aria-pressed={category === item}>{item}{item === 'Everything' && <span>{posts.length.toString().padStart(2, '0')}</span>}</button>)}</div>
       <label className="journal-search"><span className="sr-only">Search editorials</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Find a thought…" value={query} onChange={event => setQuery(event.target.value)} /></label>
@@ -21,13 +21,13 @@ export function Editorials({ posts, feedState }) {
       const quote = post.blocks.find(block => block.type === 'quote' || block.type === 'statement');
       return <Link className={`editorial-card editorial-card-${index % 4} ${post.cover ? 'has-cover' : 'no-cover'}`} key={post.id} to={`/editorials/${post.slug}`} state={{ backgroundLocation: location }}>
         <div className="editorial-art">
-          {post.cover ? <img src={post.cover} alt={post.coverAlt || ''} loading={index > 1 ? 'lazy' : 'eager'} /> : <><span className="editorial-art-grid" /><span className="editorial-art-symbol" aria-hidden="true">{quote ? '“' : index % 2 ? '↗' : '✳'}</span>{quote && <span className="editorial-art-quote">{quote.text.slice(0, 140)}{quote.text.length > 140 ? '…' : ''}</span>}{!quote && <span className="editorial-art-label">{post.category.toUpperCase()}</span>}</>}
+          {post.cover ? <img src={post.cover} alt={post.coverAlt || ''} loading={index > 1 ? 'lazy' : 'eager'} /> : <><span className="editorial-art-grid" />{quote && <><span className="editorial-art-symbol" aria-hidden="true">“</span><span className="editorial-art-quote">{quote.text.slice(0, 140)}{quote.text.length > 140 ? '…' : ''}</span></>}{!quote && <span className="editorial-art-label">{post.category.toUpperCase()}</span>}</>}
           <span className="entry-number">ENTRY / {(index + 1).toString().padStart(2, '0')}</span>
           <span className="open-article" aria-hidden="true">↗</span>
         </div>
         <div className="editorial-card-copy"><div className="editorial-meta"><span>{post.category}</span><span>{formatDate(post.publishedAt)}</span></div><h2>{post.title}</h2><p>{post.excerpt || post.blocks.find(block => block.type === 'paragraph')?.text.slice(0, 180)}</p><div className="editorial-card-foot"><span>{readingTime(post)} MIN READ</span><span>Read this entry ↗</span></div></div>
       </Link>;
-    })}</div> : <div className="empty-state"><span className="empty-symbol">✳</span><h2>{query || category !== 'Everything' ? 'No matching thoughts. Yet.' : 'The next chapter starts here.'}</h2><p>{query || category !== 'Everything' ? 'Try a different search or category.' : 'New editorials, life updates, and things in progress will appear here.'}</p>{(query || category !== 'Everything') && <button className="secondary-button" onClick={() => { setQuery(''); setCategory('Everything'); }}>Clear filters</button>}</div>}
+    })}</div> : <div className="empty-state"><h2>{query || category !== 'Everything' ? 'No matching thoughts. Yet.' : 'The next chapter starts here.'}</h2><p>{query || category !== 'Everything' ? 'Try a different search or category.' : 'New editorials, life updates, and things in progress will appear here.'}</p>{(query || category !== 'Everything') && <button className="secondary-button" onClick={() => { setQuery(''); setCategory('Everything'); }}>Clear filters</button>}</div>}
     <div className="journal-end"><span className="live-dot" /><span>{feedState.loading ? 'Checking the latest entries…' : 'An open journal. Never quite finished.'}</span><span>HANSIFIES IT / PERSONAL WEB</span></div>
   </section>;
 }
@@ -37,7 +37,7 @@ export function ArticleContent({ post, preview = false }) {
     <header className="article-heading"><span className="eyebrow">{post.category} / {preview ? 'UNPUBLISHED PREVIEW' : 'FROM THE JOURNAL'}</span><h1>{post.title || 'Your title goes here.'}</h1>{post.excerpt && <p className="article-deck">{post.excerpt}</p>}<div className="article-author"><span className="author-monogram">h.</span><div><strong>{profile.name}</strong><span>{formatDate(post.publishedAt)} · {readingTime(post)} min read</span></div><span className="article-wordmark">HANSIFIES IT</span></div></header>
     {post.cover && <figure className="article-cover"><img src={post.cover} alt={post.coverAlt || ''} /><figcaption>{post.coverAlt}</figcaption></figure>}
     <div className="article-prose">{post.blocks.map((block, index) => block.type === 'quote' ? <blockquote key={index}><span aria-hidden="true">“</span>{block.text}</blockquote> : <p key={index} className={block.type === 'statement' ? 'narrative-statement' : ''}>{block.text}</p>)}</div>
-    <div className="article-endmark" aria-label="End of entry">✳</div>
+    <div className="article-endmark" aria-hidden="true" />
   </article>;
 }
 

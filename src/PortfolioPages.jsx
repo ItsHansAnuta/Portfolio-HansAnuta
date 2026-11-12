@@ -3,7 +3,7 @@ import Icon from './Icon.jsx';
 
 export function AboutSection() {
   return <section className="about-section section-wrap" id="about" aria-labelledby="about-title">
-    <div className="section-kicker"><span>THE PERSON / BEHIND THE PIXELS</span><Icon name="star" /></div>
+    <div className="section-kicker"><span>THE PERSON / BEHIND THE PIXELS</span></div>
     <div className="about-layout">
       <h2 className="page-title" id="about-title">A developer.<br />But not <em>just</em><br />a developer.</h2>
       <div className="about-copy">

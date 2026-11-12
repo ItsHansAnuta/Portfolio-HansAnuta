@@ -42,7 +42,7 @@ function Identity({ onAbout }) {
   return <div className="identity-wrap" ref={ref} onPointerMove={tilt} onPointerLeave={() => { ref.current.style.setProperty('--rx', '0deg'); ref.current.style.setProperty('--ry', '0deg'); }}>
     <button className={`identity ${flipped ? 'is-flipped' : ''}`} onClick={() => setFlipped(!flipped)} aria-label={flipped ? 'Show identity artwork' : 'Turn over my identity card'}>
       <span className="identity-front">
-        {profile.portrait ? <img src={profile.portrait} alt={profile.portraitAlt} /> : <span className="identity-art" aria-hidden="true"><span className="orbit orbit-one" /><span className="orbit orbit-two" /><span className="orbit orbit-three" /><span className="monogram">h<span>.</span></span><span className="art-spark">✳</span></span>}
+        {profile.portrait ? <img src={profile.portrait} alt={profile.portraitAlt} /> : <span className="identity-art" aria-hidden="true"><span className="orbit orbit-one" /><span className="orbit orbit-two" /><span className="orbit orbit-three" /><span className="monogram">h<span>.</span></span></span>}
         <span className="id-top">THE PERSON BEHIND THE PIXELS <span>↗</span></span>
         <span className="id-bottom"><strong>{profile.name}</strong><span>Developer. Human. Always curious.</span></span>
         <span className="flip-hint">↻ click to turn over</span>
@@ -59,7 +59,7 @@ function AppPreview() {
   return <div className="app-preview">
     <div className="preview-toolbar"><span className="window-dots"><i /><i /><i /></span><span>little things.app</span><Icon name={platform === 'Web' ? 'web' : platform === 'Windows' ? 'desktop' : 'mobile'} size={13} /></div>
     <div className="platform-tabs" role="group" aria-label="Preview platform">{['Web', 'Windows', 'Android'].map(p => <button key={p} aria-pressed={platform === p} onClick={() => setPlatform(p)}>{p}</button>)}</div>
-    <div className={`mini-app ${platform.toLowerCase()}`}><div className="mini-app-top"><span className="mini-app-icon">✳</span><span>SMALL STEPS, GOOD THINGS</span></div><h3>A little progress.</h3><p>An interactive little idea. Give it a try.</p><div className="task-list">{items.map((item, i) => <button key={item.title} className={item.done ? 'task done' : 'task'} onClick={() => setItems(items.map((t, j) => j === i ? { ...t, done: !t.done } : t))} aria-pressed={item.done}><span className="checkbox">{item.done ? '✓' : ''}</span><span>{item.title}</span></button>)}</div><div className="progress-track"><span style={{ width: `${items.filter(i => i.done).length / items.length * 100}%` }} /></div><span className="progress-label">{items.filter(i => i.done).length} of 3 little things</span></div>
+    <div className={`mini-app ${platform.toLowerCase()}`}><div className="mini-app-top"><span>SMALL STEPS, GOOD THINGS</span></div><h3>A little progress.</h3><p>An interactive little idea. Give it a try.</p><div className="task-list">{items.map((item, i) => <button key={item.title} className={item.done ? 'task done' : 'task'} onClick={() => setItems(items.map((t, j) => j === i ? { ...t, done: !t.done } : t))} aria-pressed={item.done}><span className="checkbox">{item.done ? '✓' : ''}</span><span>{item.title}</span></button>)}</div><div className="progress-track"><span style={{ width: `${items.filter(i => i.done).length / items.length * 100}%` }} /></div><span className="progress-label">{items.filter(i => i.done).length} of 3 little things</span></div>
     <div className="preview-footer"><span className="live-dot" /> A working UI experiment <span>↖ try me</span></div>
   </div>;
 }
@@ -77,8 +77,7 @@ function HomePage() {
             <DeskCard className="profile-card" label="01 / the human" resetKey={resetKey}><Identity onAbout={() => document.getElementById('about')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })} /></DeskCard>
             <DeskCard className="preview-card" label="02 / the things I build" resetKey={resetKey}><AppPreview /></DeskCard>
             <DeskCard className="note-card" label="03 / a thought" resetKey={resetKey}><div className="sticky-note"><span className="note-pin" /><span className="handwritten">Good software.<br />A little personality.<br /><span>A work in progress.</span></span><span className="note-signature">— Hans</span></div></DeskCard>
-            <button className={`desk-spark ${light ? 'lit' : ''}`} onClick={() => setLight(!light)} aria-label="Toggle warm desk lighting" aria-pressed={light}>✳</button>
-            <span className="spark-caption" aria-hidden="true">a bright idea ↗</span>
+            <button className="desk-light-toggle" onClick={() => setLight(!light)} aria-label="Toggle warm desk lighting" aria-pressed={light}>Desk light: {light ? 'warm' : 'soft'}</button>
             <div className="desk-caption"><span className="drag-icon">⠿</span> Drag the card headers. Click the little things.</div>
             <span className="desk-edition">PERSONAL WEB / VOL. 01</span>
           </div>
@@ -133,7 +132,7 @@ function App({ initialPosts = [] }) {
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <header className="site-header app-header">
-      <Link className="brand" to="/" aria-label="Hansifies IT home"><span className="brand-symbol">h<span>✳</span></span><span>hansifies<span className="brand-it">IT</span></span></Link>
+      <Link className="brand" to="/" aria-label="Hansifies IT home"><span className="brand-symbol">h</span><span>hansifies<span className="brand-it">IT</span></span></Link>
       <nav aria-label="Main navigation">{[['/', 'Home'], ['/editorials', 'Editorials']].map(([to, label]) => <NavLink key={to} to={to} end={to === '/'}>{label}</NavLink>)}</nav>
       <NavLink className="contact-nav" to="/contact">Say hello <Icon name="external" size={17} /></NavLink>
     </header>
